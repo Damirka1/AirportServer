@@ -173,7 +173,7 @@ function findTickets() {
     const dateStart = document.getElementById("startDate").value;
     const dateEnd = document.getElementById("endDate").value;
 
-    var api = '/api/airport/' + source + '/schedule';
+    var api = '/airport/api/airport/' + source + '/schedule';
 
     if(destination !== 'Все') {
         api += '/' + destination;
