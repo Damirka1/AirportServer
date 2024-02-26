@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Проценты по кредиты</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+</head>
+<body>
+
+<!--<h1>Нужны деньги? Иди на вебкам! (На крайняк уж пользуйся этим)</h1>-->
+
+<form id="currencyConverter">
+    <h5 style="text-align: center">Лучший веб-интерфейс на Bootstrap для Jusan - банка</h5>
+    <label for="amount"><h5>Сумма кредита:</h5></label>
+    <input type="number" id="amount" placeholder="Введите сумму" required>
+
+    <label for="count"><h5>Количество дней:</h5></label>
+    <input type="number" id="count" placeholder="Введите длительность" required>
+
+    <label for="percents"><h5>Процентная ставка</h5></label>
+    <select id="percents" class="form-select" required>
+        <option value="12" selected>12%</option>
+        <option value="15">15%</option>
+        <option value="20">20%</option>
+    </select>
+
+    <div class="button">
+        <button type="button" onclick="calculate()" class="btn btn-secondary">Подсчитать</button>
+    </div>
+</form>
+
+<div class="result-center">
+    <div id="liveToast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+        <div class="d-flex">
+            <div class="toast-body">
+                <h5>Результат:</h5>
+                <h6 id="result"></h6>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+<script src="index.js" defer></script>
+</html>

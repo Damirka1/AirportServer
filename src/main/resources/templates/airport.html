@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:fontSize="http://www.w3.org/1999/xhtml" lang="ru">
+<head>
+    <title th:text="Аэропорт + ' - ' + ${airport}"></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="style.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bs-stepper/dist/css/bs-stepper.min.css">
+
+</head>
+<body>
+<main>
+    <div class="container mt-5">
+
+        <h2 class="mb-4">Покупка авиабилетов</h2>
+
+        <div class="bs-stepper">
+            <div class="bs-stepper-header" role="tablist">
+                <!-- your steps here -->
+                <div class="step" data-target="#dest-part">
+                    <button type="button" class="step-trigger" role="tab" aria-controls="dest-part" id="dest-part-trigger">
+                        <span class="bs-stepper-circle">1</span>
+                        <span class="bs-stepper-label">Выбор направления</span>
+                    </button>
+                </div>
+                <div class="line"></div>
+                <div class="step" data-target="#data-part">
+                    <button type="button" class="step-trigger" role="tab" aria-controls="data-part" id="data-part-trigger">
+                        <span class="bs-stepper-circle">2</span>
+                        <span class="bs-stepper-label">Ввод информации</span>
+                    </button>
+                </div>
+
+                <div class="line"></div>
+                <div class="step" data-target="#information-part">
+                    <button type="button" class="step-trigger" role="tab" aria-controls="information-part" id="information-part-trigger">
+                        <span class="bs-stepper-circle">3</span>
+                        <span class="bs-stepper-label">Итог</span>
+                    </button>
+                </div>
+            </div>
+            <div class="bs-stepper-content">
+                <!-- your steps content here -->
+                <div class="container shadow min-vh-100 py-2 mb-5">
+                    <div id="dest-part" class="content" role="tabpanel" aria-labelledby="dest-part-trigger">
+
+                        <h5 class="mt-4 mx-4">Выберите направление:</h5>
+                        <div class="form-group mx-4">
+                            <select class="form-control" id="scheduleId" name="scheduleId">
+                                <option th:each="schedule : ${schedules}" th:value="${schedule.start.name + ' - ' + schedule.end.name}" th:text="${'   ' + schedule.start.name + ' - ' + schedule.end.name}"></option>
+                                <option th:value="${schedules[0].start.name + ' - ' + 'Все'}" th:text="${'   ' + schedules[0].start.name + ' - ' + 'Все'}" selected></option>
+                            </select>
+                        </div>
+
+                        <h5 class="mt-4 mx-4">Выберите дату поиска:</h5>
+                        <div class="row justify-content-center">
+                            <div class="col-lg-3 col-sm-6">
+                                <label for="startDate">Начало</label>
+                                <input id="startDate" class="form-control" type="date" placeholder="DD-MM-YYYY" required pattern="[0-9]{2}-[0-9]{2}-[0-9]{4}" th:value="${timeStart}" />
+                                <span id="startDateSelected"></span>
+                            </div>
+                            <div class="col-lg-3 col-sm-6">
+                                <label for="endDate">Конец</label>
+                                <input id="endDate" class="form-control" placeholder="DD-MM-YYYY" required pattern="[0-9]{2}-[0-9]{2}-[0-9]{4}" type="date" th:value="${timeEnd}" />
+                                <span id="endDateSelected"></span>
+                            </div>
+
+                        </div>
+
+                        <div class="d-flex justify-content-center mt-5 rounded">
+                            <button type="submit" class="btn btn-primary w-50" onclick="findTickets()">Поиск</button>
+                        </div>
+
+                        <div class="container-fluid d-flex justify-content-center mt-5" id="search-content">
+
+                            <div class="spinner-border text-primary" id="progress-spinner" style="width: 6rem; height: 6rem;" role="status" hidden>
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div id="data-part" class="content" role="tabpanel" aria-labelledby="data-part-trigger">
+
+                        <div class="data-part-header">
+
+                            <button class="btn btn-outline-light btn-lg" onclick="onClickBack()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-left back-button" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+                                </svg>
+                            </button>
+
+                            <h5 class="mt-2 mx-4">Введите ваши данные:</h5>
+                        </div>
+
+                        <div class="mt-4 mx-4">
+                            <h5 class="mb-4 mx-4">Информация о рейсе</h5>
+                            <div class="row mx-4">
+                                <div class="col-md-6">
+                                    <p id="flight-date"> 06 Февраля 2024</p>
+                                    <p id="flight-time"><strong>Время вылета:</strong> 14:30</p>
+                                    <p id="flight-plane"><strong>Модель самолета:</strong> Boeing 747</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p id="flight-start"><strong>Начальный пункт:</strong></p>
+                                    <p id="flight-end"><strong>Конечный пункт:</strong> Лондон (LHR)</p>
+                                    <p id="flight-status"><strong>Статус рейса:</strong> Покупка билетов</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 mx-4" id="passengerData">
+                            <div class="mt-5" id="passenger1">
+                                <h5 class="mb-2 mx-4" >Данные пассажира №1</h5>
+                                <div class="row mx-4">
+                                    <div class="col-md-6">
+                                        <label for="fullName" class="form-label">ФИО</label>
+                                        <input type="text" class="form-control" id="fullName" placeholder="Введите ФИО">
+
+                                        <label for="passportNumber" class="form-label">Номер паспорта</label>
+                                        <input type="text" class="form-control" id="passportNumber" placeholder="Введите номер паспорта">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" placeholder="Введите email">
+
+                                        <label for="phoneNumber" class="form-label">Номер телефона</label>
+                                        <input type="tel" class="form-control" id="phoneNumber" placeholder="Введите номер телефона">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-center mt-5 rounded">
+                            <button type="submit" class="btn btn-success w-50 mx-4" onclick="addPassenger()">Добавить пассажира</button>
+                            <button type="submit" class="btn btn-danger w-50 mx-4" onclick="deletePassenger()" hidden id="removePassengerButton">Удалить пассажира</button>
+                        </div>
+
+                        <div class="d-flex justify-content-center mt-4 rounded">
+                            <button type="submit" class="btn btn-dark w-50 mx-4" onclick="">Далее</button>
+                        </div>
+
+                        <div class="mb-5"></div>
+
+                    </div>
+
+                    <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bs-stepper/dist/js/bs-stepper.min.js"></script>
+<script src="airport.js" defer></script>
+</body>
+
+<footer class="bg-dark text-white py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Контакты</h5>
+                <p>Телефон: +7 (XXX) XXX-XX-XX</p>
+                <p>Email: example@example.com</p>
+            </div>
+            <div class="col-md-6">
+                <h5>О нас</h5>
+                <p>Мы предоставляем лучшие услуги по разработке и дизайну в вашем городе.</p>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <p>&copy; 2024 Название вашей компании</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <a href="#" class="text-white me-3">Политика конфиденциальности</a>
+                <a href="#" class="text-white">Условия использования</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+</html>

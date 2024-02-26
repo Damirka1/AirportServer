@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Books Service</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+  <h1 class="my-5">Books Service</h1>
+
+  <h2 class="my-4">All Books</h2>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Title</th>
+      <th>Author</th>
+    </tr>
+    </thead>
+    <tbody id="booksTable">
+    <!-- Table rows will be inserted here dynamically -->
+    </tbody>
+  </table>
+
+  <h2 class="my-4">Update Book</h2>
+  <form id="updateBookForm">
+    <div class="mb-3">
+      <label for="updateId" class="form-label">Book ID</label>
+      <input type="text" class="form-control" id="updateId" name="id" required>
+    </div>
+    <div class="mb-3">
+      <label for="updateTitle" class="form-label">Title</label>
+      <input type="text" class="form-control" id="updateTitle" name="title" required>
+    </div>
+    <div class="mb-3">
+      <label for="updateAuthor" class="form-label">Author</label>
+      <input type="text" class="form-control" id="updateAuthor" name="author" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+  </form>
+</div>
+
+<!-- Bootstrap JS bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  // JavaScript code for fetching and updating books
+
+  // Function to fetch all books and populate the table
+  function fetchBooks() {
+    $.get("/books", function(data) {
+      $("#booksTable").empty();
+      data.forEach(function(book) {
+        $("#booksTable").append(`<tr><td>${book.id}</td><td>${book.title}</td><td>${book.author}</td></tr>`);
+      });
+    });
+  }
+
+  // Function to handle form submission for updating book
+  $("#updateBookForm").submit(function(event) {
+    event.preventDefault();
+    var formData = $(this).serialize();
+    $.post("/updateBook", formData, function(response) {
+      if (response.success) {
+        alert("Book updated successfully!");
+        fetchBooks(); // Refresh the table
+      } else {
+        alert("Failed to update book. Please check your input.");
+      }
+    });
+  });
+
+  // Fetch books when the page loads
+  $(document).ready(function() {
+    fetchBooks();
+  });
+</script>
+</body>
+</html>
